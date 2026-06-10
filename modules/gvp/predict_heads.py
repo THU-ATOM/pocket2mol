@@ -158,6 +158,10 @@ class AttentionEdges(nn.Module):
 
         index_edge_i_list, index_edge_j_list = index_real_cps_edge_for_atten
 
+        if len(index_edge_j_list) == 0:
+            # No attention edges — return edge_attr unchanged after layernorm
+            return [self.layernorm_sca(edge_attr[0]), self.layernorm_vec(edge_attr[1])]
+
         # # get nodes of triangle edges
 
         atten_bias = self.atten_bias_lin(
@@ -165,7 +169,6 @@ class AttentionEdges(nn.Module):
             tri_edge_feat,
             pos_compose,
         )
-
 
         # query * key
         queries_i = [h_queries[0][index_edge_i_list], h_queries[1][index_edge_i_list]]
